@@ -49,10 +49,10 @@ func UpdateBill(bill *models.Bill) (*models.Bill, error) {
 	return bill, nil
 }
 
-func PayBill(bill *models.Bill) (*models.Bill, error) {
+func PayBill(billId int) (error) {
 	conn, err := db()
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer conn.Close()
 
@@ -63,15 +63,15 @@ func PayBill(bill *models.Bill) (*models.Bill, error) {
 	where 
 		id = $2
 	`
-	_, err = conn.Query(query, time.Now(), bill.Id)
+	_, err = conn.Query(query, time.Now(), billId)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return bill, nil
+	return nil
 }
 
-func GetList() (*[]models.Bill, error) {
+func GetList(id int) (*[]models.Bill, error) {
 	conn, err := db()
 	if err != nil {
 		return nil, err
@@ -83,6 +83,9 @@ func GetList() (*[]models.Bill, error) {
 		id, description, expDay, lastDate, path, track
 	from bills
 	`
+	if id > 0 {
+		query = query + fmt.Sprintf("where id = %d", id)
+	}
 	result, err := conn.Query(query)
 	if err != nil {
 		return nil, err
