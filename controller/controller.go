@@ -2,53 +2,114 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+	"strconv"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/glgaspar/pay_checker_api/data"
 	"github.com/glgaspar/pay_checker_api/models"
-	"io"
-	"net/http"
 )
 
 func CreateBill(c *gin.Context) {
 	bodyJson, err := io.ReadAll(c.Request.Body)
 	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, models.ResultRequest{Status: false, Message: "error parsing body data", Data: err.Error()})
+		c.IndentedJSON(
+			http.StatusBadRequest,
+			models.ResultRequest{
+				Status:  false,
+				Message: "error parsing body data",
+				Data:    err.Error(),
+			},
+		)
 		return
 	}
+
 	var body models.Bill
 	if err := json.Unmarshal(bodyJson, &body); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, models.ResultRequest{Status: false, Message: "error parsing body data", Data: err.Error()})
+		c.IndentedJSON(
+			http.StatusBadRequest,
+			models.ResultRequest{
+				Status:  false,
+				Message: "error parsing body data",
+				Data:    err.Error(),
+			},
+		)
 		return
 	}
 
 	result, err := data.CreateBill(&body)
 	if err != nil {
-		c.IndentedJSON(http.StatusUnprocessableEntity, models.ResultRequest{Status: false, Message: "error processing data", Data: err.Error()})
+		c.IndentedJSON(
+			http.StatusUnprocessableEntity,
+			models.ResultRequest{
+				Status:  false,
+				Message: "error processing data",
+				Data:    err.Error(),
+			},
+		)
 		return
 	}
 
-	c.IndentedJSON(http.StatusOK, models.ResultRequest{Status: true, Message: "", Data: result})
+	c.IndentedJSON(
+		http.StatusOK,
+		models.ResultRequest{
+			Status:  true,
+			Message: "bill created successfully",
+			Data:    result,
+		},
+	)
 }
 
 func UpdateBill(c *gin.Context) {
 	bodyJson, err := io.ReadAll(c.Request.Body)
 	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, models.ResultRequest{Status: false, Message: "error parsing body data", Data: err.Error()})
+		c.IndentedJSON(
+			http.StatusBadRequest,
+			models.ResultRequest{
+				Status:  false,
+				Message: "error parsing body data",
+				Data:    err.Error(),
+			},
+		)
 		return
 	}
 	var body models.Bill
 	if err := json.Unmarshal(bodyJson, &body); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, models.ResultRequest{Status: false, Message: "error parsing body data", Data: err.Error()})
+		c.IndentedJSON(
+			http.StatusBadRequest,
+			models.ResultRequest{
+				Status:  false,
+				Message: "error parsing body data",
+				Data:    err.Error(),
+			},
+		)
 		return
 	}
 
 	result, err := data.UpdateBill(&body)
 	if err != nil {
-		c.IndentedJSON(http.StatusUnprocessableEntity, models.ResultRequest{Status: false, Message: "error processing data", Data: err.Error()})
+		c.IndentedJSON(
+			http.StatusUnprocessableEntity,
+			models.ResultRequest{
+				Status:  false,
+				Message: "error processing data",
+				Data:    err.Error(),
+			},
+		)
 		return
 	}
 
-	c.IndentedJSON(http.StatusOK, models.ResultRequest{Status: true, Message: "", Data: result})
+	c.IndentedJSON(
+		http.StatusOK,
+		models.ResultRequest{
+			Status:  true,
+			Message: "bill data updated successfully",
+			Data:    result,
+		},
+	)
 }
 
 func PayBill(c *gin.Context) {
@@ -115,11 +176,25 @@ func PayBill(c *gin.Context) {
 }
 
 func GetList(c *gin.Context) {
-	result, err := data.GetList()
+	result, err := data.GetList(-1)
 	if err != nil {
-		c.IndentedJSON(http.StatusUnprocessableEntity, models.ResultRequest{Status: false, Message: "error processing data", Data: err.Error()})
+		c.IndentedJSON(
+			http.StatusUnprocessableEntity,
+			models.ResultRequest{
+				Status:  false,
+				Message: "error processing data",
+				Data:    err.Error(),
+			},
+		)
 		return
 	}
 
-	c.IndentedJSON(http.StatusOK, models.ResultRequest{Status: true, Message: "", Data: result})
+	c.IndentedJSON(
+		http.StatusOK,
+		models.ResultRequest{
+			Status:  true,
+			Message: fmt.Sprintf("%d itens found", len(*result)),
+			Data:    result,
+		},
+	)
 }
