@@ -29,7 +29,7 @@ func setUpRoutes(router *gin.Engine) {
 
 	// update bill data
 	router.POST("/udpate", controller.UpdateBill)
-	router.POST("/pay", controller.PayBill)
+	router.POST("/pay/:billId", controller.PayBill)
 
 	// list bills
 	router.GET("/list", controller.GetList)
