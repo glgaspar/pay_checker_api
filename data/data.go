@@ -1,6 +1,7 @@
 package data
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/glgaspar/pay_checker_api/models"
